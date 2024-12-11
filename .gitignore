@@ -51,8 +51,8 @@ work
 multidatabackend.json
 multidatabackend_sd2x.json
 
-config/*.json
-config/*.env
+# config/*.json
+# config/*.env
 wandb/
 cache/
 vae_cache/
@@ -60,8 +60,8 @@ vendor/
 inference/
 webhooks.json
 untracked/
-config/*/
-config/*.toml
+# config/*/
+# config/*.toml
 static
 templates
 api_state.json
