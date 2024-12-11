@@ -1297,6 +1297,18 @@ def get_argument_parser():
         ),
     )
     parser.add_argument(
+        "--grad_clip_method",
+        default="value",
+        choices=["value", "norm"],
+        help=(
+            "When applying --max_grad_norm, the method to use for clipping the gradients."
+            " The previous default option 'norm' will scale ALL gradient values when any outliers in the gradient are encountered, which can reduce training precision."
+            " The new default option 'value' will clip individual gradient values using this value as a maximum, which may preserve precision while avoiding outliers, enhancing convergence."
+            " In simple terms, the default will help the model learn faster without blowing up (SD3.5 Medium was the main test model)."
+            " Use 'norm' to return to the old behaviour."
+        ),
+    )
+    parser.add_argument(
         "--push_to_hub",
         action="store_true",
         help="Whether or not to push the model to the Hub.",
@@ -2396,19 +2408,16 @@ def parse_cmdline_args(input_args=None, exit_on_error: bool = False):
         sys.exit(1)
 
     if not args.i_know_what_i_am_doing:
-        if args.model_family == "pixart_sigma" or args.model_family == "sd3":
+        if args.model_family == "pixart_sigma":
             if args.max_grad_norm is None or float(args.max_grad_norm) > 0.01:
                 warning_log(
-                    f"{'PixArt Sigma' if args.model_family == 'pixart_sigma' else 'Stable Diffusion 3'} requires --max_grad_norm=0.01 to prevent model collapse. Overriding value. Set this value manually to disable this warning."
+                    f"PixArt Sigma requires --max_grad_norm=0.01 to prevent model collapse. Overriding value. Set this value manually to disable this warning."
                 )
                 args.max_grad_norm = 0.01
     if args.gradient_checkpointing:
         # enable torch compile w/ activation checkpointing :[ slows us down.
         torch._dynamo.config.optimize_ddp = False
 
-    # if args.use_ema:
-    #     if "lora" in args.model_type:
-    #         raise ValueError("Using EMA is not currently supported for LoRA training.")
     args.logging_dir = os.path.join(args.output_dir, args.logging_dir)
     args.accelerator_project_config = ProjectConfiguration(
         project_dir=args.output_dir, logging_dir=args.logging_dir
