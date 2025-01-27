@@ -1639,7 +1639,7 @@ class Trainer:
                 init_kwargs={
                     "wandb": {
                         "name": tracker_run_name,
-                        "id": wandb.run.id,
+                        "id": tracker_run_name,
                         # "id": f"{public_args_hash}",
                         "resume": "allow",
                         "allow_val_change": True,
