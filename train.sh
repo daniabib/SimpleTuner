@@ -102,4 +102,6 @@ else
 
 fi
 
-exit 0
+exitcode=$?
+
+exit $exitcode
