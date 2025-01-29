@@ -95,11 +95,13 @@ if [[ -z "${ACCELERATE_CONFIG_PATH}" ]]; then
 fi
 if [ -f "${ACCELERATE_CONFIG_PATH}" ]; then
     echo "Using Accelerate config file: ${ACCELERATE_CONFIG_PATH}"
-    accelerate launch --config_file="${ACCELERATE_CONFIG_PATH}" train.py
+    accelerate launch --config_file="${ACCELERATE_CONFIG_PATH}" train_modal.py
 else
     echo "Accelerate config file not found: ${ACCELERATE_CONFIG_PATH}. Using values from config.env."
-    accelerate launch ${ACCELERATE_EXTRA_ARGS} --mixed_precision="${MIXED_PRECISION}" --num_processes="${TRAINING_NUM_PROCESSES}" --num_machines="${TRAINING_NUM_MACHINES}" --dynamo_backend="${TRAINING_DYNAMO_BACKEND}" train.py
+    accelerate launch ${ACCELERATE_EXTRA_ARGS} --mixed_precision="${MIXED_PRECISION}" --num_processes="${TRAINING_NUM_PROCESSES}" --num_machines="${TRAINING_NUM_MACHINES}" --dynamo_backend="${TRAINING_DYNAMO_BACKEND}" train_modal.py
 
 fi
 
-exit 0
+exitcode=$?
+
+exit $exitcode
